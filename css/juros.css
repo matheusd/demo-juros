@@ -1,0 +1,13 @@
+.tabs {
+    width: 30em;
+    display: inline-block;
+    margin-right: 0.5em;
+    border-right: 1px solid #eee;
+    padding-right: 0.5em;
+}
+
+
+#tabs {
+    margin-left: 1em;
+    width: 2000px;
+}

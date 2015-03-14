@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/juros.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+  
+<div style="margin-top: 1em">
+    <button type="button" class="btn btn-default" id="btnNovaColuna">Nova Coluna</button>
+</div>
+    
+<div id="tabs">    
+</div>    
+
+<div role="tabpanel" class="tabs hide" id="modeloTabs">
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Novo Cenário <span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+          <li class=""><a role="tab">Consórcio imóvel</a></li>
+          <li class=""><a role="tab">Consórcio terreno</a></li>
+          <li class=""><a role="tab">Financiamento imóvel</a></li>
+          <li class=""><a role="tab">Financiamento terreno</a></li>
+        </ul>
+      </li>
+      
+      <li role="presentation" class="dropdown">
+        <a href="#" id="myTabDrop2" class="dropdown-toggle" data-toggle="dropdown">Cenário existente <span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+          <li class=""><a role="tab">Consórcio luiza</a></li>
+          <li class=""><a role="tab">Consórcio sicredi</a></li>
+          <li class=""><a role="tab">Jequitibá (sem entrada)</a></li>
+          <li class=""><a role="tab">Jequitibá (com entrada)</a></li>
+        </ul>
+      </li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">    
+    <div role="tabpanel" class="tab-pane active tab-dyn-content">...</div>   
+  </div>
+
+</div>
+    
+    
+<script>
+    function btnTabCenarioClicked(e) {
+        e.preventDefault();
+        var $target = $(e.target);
+        var $tabs = $target.parents(".tabs");
+        var $content = $tabs.find(".tab-dyn-content");
+        $content.html($target[0].innerHTML);        
+    }
+
+    function btnNovaColunaClicked(e) {
+        var randomId = 'ct' + Math.random();
+        var $modelo = $("#modeloTabs");
+        var $tabs = $modelo.clone().removeAttr("id").removeClass("hide");        
+        $tabs.find("[role='tab']").on('click', btnTabCenarioClicked);
+        $tabs.appendTo($("#tabs"));
+    }
+
+    function setup() {
+        $("#btnNovaColuna").on("click", btnNovaColunaClicked);
+    }
+</script>    
+
+       
+    <script src="js/jquery-1.11.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script>$(document).ready(setup);</script>
+  </body>
+</html>
