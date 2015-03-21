@@ -32,10 +32,10 @@
       <li role="presentation" class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Novo Cenário <span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
-          <li class=""><a role="tab">Consórcio imóvel</a></li>
-          <li class=""><a role="tab">Consórcio terreno</a></li>
-          <li class=""><a role="tab">Financiamento imóvel</a></li>
-          <li class=""><a role="tab">Financiamento terreno</a></li>
+          <li class=""><a role="tab" func="JurosCenario1">Poupança + Compra</a></li>
+          <li class=""><a role="tab" func="JurosCenario2">Consórcio terreno</a></li>
+          <li class=""><a role="tab" func="JurosCenario3">Financiamento imóvel</a></li>
+          <li class=""><a role="tab" func="JurosCenario4">Financiamento terreno</a></li>
         </ul>
       </li>
       
@@ -56,6 +56,7 @@
   </div>
 
 </div>
+
     
     
 <script>
@@ -64,7 +65,10 @@
         var $target = $(e.target);
         var $tabs = $target.parents(".tabs");
         var $content = $tabs.find(".tab-dyn-content");
-        $content.html($target[0].innerHTML);        
+        var funcName = $target.attr("func");
+        if (funcName && window[funcName]) {
+            $content.jurosCalc({func: window[funcName]});
+        }
     }
 
     function btnNovaColunaClicked(e) {
@@ -83,6 +87,9 @@
        
     <script src="js/jquery-1.11.1.js"></script>
     <script src="js/bootstrap.js"></script>
+    <script src="js/juros.js"></script>
+    <script src="js/cenario1.js"></script>
+    <script src="js/cenario2.js"></script>
     <script>$(document).ready(setup);</script>
   </body>
 </html>

@@ -11,3 +11,14 @@
     margin-left: 1em;
     width: 2000px;
 }
+
+.table-campos .form-control {
+    width: 50%;
+    display: inline;
+    padding: 1px;
+    height: 24px;
+}
+
+.table-campos td {
+    text-align: right;
+}
