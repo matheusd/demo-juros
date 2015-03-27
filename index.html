@@ -26,22 +26,22 @@
 <div id="tabs">    
 </div>    
 
+<table class="table table-condensed table-hover" id="tableDados"></table>
+
 <div role="tabpanel" class="tabs hide" id="modeloTabs">
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Novo Cenário <span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
+          <li class=""><a role="tab" func="JurosCenario2">Aluguel para Sempre</a></li>          
           <li class=""><a role="tab" func="JurosCenario1">Poupança + Compra</a></li>
-          <li class=""><a role="tab" func="JurosCenario2">Consórcio terreno</a></li>
-          <li class=""><a role="tab" func="JurosCenario3">Financiamento imóvel</a></li>
-          <li class=""><a role="tab" func="JurosCenario4">Financiamento terreno</a></li>
         </ul>
       </li>
       
       <li role="presentation" class="dropdown">
         <a href="#" id="myTabDrop2" class="dropdown-toggle" data-toggle="dropdown">Cenário existente <span class="caret"></span></a>
-        <ul class="dropdown-menu" role="menu">
+        <ul class="dropdown-menu lista-cen-exist" role="menu">
           <li class=""><a role="tab">Consórcio luiza</a></li>
           <li class=""><a role="tab">Consórcio sicredi</a></li>
           <li class=""><a role="tab">Jequitibá (sem entrada)</a></li>
@@ -67,20 +67,39 @@
         var $content = $tabs.find(".tab-dyn-content");
         var funcName = $target.attr("func");
         if (funcName && window[funcName]) {
-            $content.jurosCalc({func: window[funcName]});
+            $content.jurosCalc({funcName: funcName});
+        }
+    }
+    
+    function rebuildCenariosExistentes() {
+        var cenarios = listarCenariosExistentes();
+        var $listas = $(".lista-cen-exist").empty();
+        for (var id in cenarios) {
+            var cen = cenarios[id];
+            $listas.append('<li class=""><a role="tab" class="cenario-exist" data-id-cenario="' + id + '">' + cen.nomeCenario + '</a></li>');
         }
     }
 
-    function btnNovaColunaClicked(e) {
-        var randomId = 'ct' + Math.random();
+    function btnNovaColunaClicked(e) {        
         var $modelo = $("#modeloTabs");
         var $tabs = $modelo.clone().removeAttr("id").removeClass("hide");        
         $tabs.find("[role='tab']").on('click', btnTabCenarioClicked);
         $tabs.appendTo($("#tabs"));
     }
+    
+    function btnCenarioExistClicked(e) {
+        var $target = $(e.target);
+        var $tabs = $target.parents(".tabs");
+        var $content = $tabs.find(".tab-dyn-content");
+        var id = $target.attr("data-id-cenario");        
+        var dados = JSON.parse(localStorage.getItem(id));                
+        $content.jurosCalc({dadosExist: dados});        
+    }
 
     function setup() {
         $("#btnNovaColuna").on("click", btnNovaColunaClicked);
+        $("#tabs").on("click", ".cenario-exist", btnCenarioExistClicked);
+        rebuildCenariosExistentes();
     }
 </script>    
 
