@@ -1,25 +1,36 @@
-/** Cenário de aluguel para sempre. */
-var  JurosCenario2 = function (element, options) {
+/*
+ * Cenário de pagamento de aluguel e poupança integral para compra de imóvel
+ * a vista.
+ */
+var JurosCenario3 = function (element, options) {    
     return this;
 };
 
-JurosCenario2.prototype = {
+JurosCenario3.prototype = {
     campos: function () {
         return {
+            valorImovel: {
+                label: "Valor do imóvel desejado",
+                type: "currency1000"
+            },
             poupAtual: {
-                label: "Poupança atual",
+                label: "Poupança atual (entrada)",
                 type: "currency1000"
             },
             salarioDisp: {
                 label: "Salário disponível",
                 type: "currency",
             },
-            aluguel: {
-                label: "Aluguel atual",
-                type: "currency",
+            mesesFinan: {
+                label: "Meses do financiamento",
+                type: "int",
             },
-            aumentoAluguel: {
-                label: "Aumento do aluguel (a.a.)",
+            inflacao: {
+                label: "Inflação",
+                type: "perc"
+            },
+            cetFinanciamento: {
+                label: "CET financiamento (a.a.)",
                 type: "perc"
             },
             rendimento: {
@@ -30,41 +41,56 @@ JurosCenario2.prototype = {
                 label: "Reajuste do Salário (a.a.)",
                 type: "perc"
             },
-
         }
     },
     
     recalc: function (dados, dadosCalc) {        
         var poup = dados.poupAtual;
-        var salario = dados.salarioDisp;
-        var aluguel = dados.aluguel;        
+        var salario = dados.salarioDisp;        
         var rendimento = percMes2Ano(dados.rendimento);           
+        var valorImovel = dados.valorImovel;      
+        var valorFinan = dados.valorImovel - poup;
+        poup = 0;
+        var valorAmort = tof(valorFinan / dados.mesesFinan);
+        var jurosFinan = percMes2Ano(dados.cetFinanciamento);                
         
         dadosCalc.tabs = {
             poup: {dados: []},
             rend: {dados: []},
+            parcela: {dados: []},
+            saldoDevedor: {dados: []},
             sobra: {dados: []},
-            aluguel: {dados: []},
-            salario: {dados: []},
+            salario: {dados: []},            
         }
+                
         
-        for (var i = 1; i <= 480; i++) {
+        for (var i = 1; i <= 480; i++) {        
             var rend = tof(poup*rendimento);
-            var sobra = tof(salario - aluguel);
+            
+            if (i <= dados.mesesFinan) {
+                var numParcPagas = i -1;
+                var valorTotAmort = numParcPagas * valorAmort;
+                var parcela = tof(valorAmort + jurosFinan * (valorFinan - valorTotAmort));
+            } else {
+                var parcela = 0;
+            }
+            
+            
+            var sobra = tof(salario - parcela);
             
             poup = poup + rend + sobra;
-            //poupTab.push(poup);
+            
             
             if (i % 12 == 0) {
                 salario = salario * (1+dados.reajusteSalario);
-                aluguel = aluguel * (1+dados.aumentoAluguel);
             }
             
             dadosCalc.tabs.poup.dados.push(poup);
             dadosCalc.tabs.rend.dados.push(rend);
             dadosCalc.tabs.sobra.dados.push(sobra);
-            dadosCalc.tabs.aluguel.dados.push(aluguel);
+            dadosCalc.tabs.parcela.dados.push(parcela);
             dadosCalc.tabs.salario.dados.push(salario);
+            
             
             switch (i) {
                 case 60: dadosCalc.poup5 = poup; break;

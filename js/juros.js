@@ -30,6 +30,8 @@
             this.buildCampoRow($tbody, "id", {type: "hidden"});            
             $tbody.find("[name='id']").val(Math.random());
             
+            this.buildCampoRow($tbody, "mesCompra", {type: "text", label: "Compra do imóvel em"});            
+            this.buildCampoRow($tbody, "valorCompra", {type: "text", label: "Valor na data da compra"});            
             this.buildCampoRow($tbody, "poup5", {type: "currency1000", label: "Poupado em 5 anos"});            
             this.buildCampoRow($tbody, "poup10", {type: "currency1000", label: "Poupado em 10 anos"});            
             this.buildCampoRow($tbody, "poup15", {type: "currency1000", label: "Poupado em 15 anos"});            
@@ -67,6 +69,9 @@
             $tdc.append(" %");
         },
         buildCampo_text: function (nomeCampo, campo, $tdc) {
+            var $inp = $("<input type='text' class='form-control input-sm' style='width: 15em'>").attr("name", nomeCampo).appendTo($tdc);                        
+        },
+        buildCampo_int: function (nomeCampo, campo, $tdc) {
             var $inp = $("<input type='text' class='form-control input-sm' style='width: 15em'>").attr("name", nomeCampo).appendTo($tdc);                        
         },
         buildCampo_btns: function (nomeCampo, campo, $tdc)  {
@@ -114,6 +119,8 @@
                     val = parseFloat(val);
                 } else if (tipo == "perc") {
                     val = parseFloat(val)/100;
+                } else if (tipo == "int") {
+                    val = parseInt(val);
                 }
                 dados[$t.attr("name")] = val;
             });            
@@ -144,7 +151,13 @@
             $table.find("[name='poup15']").val((dadosCalc.poup15/1000).toFixed(2));
             $table.find("[name='poup20']").val((dadosCalc.poup20/1000).toFixed(2));
             $table.find("[name='poup30']").val((dadosCalc.poup30/1000).toFixed(2));
-            $table.find("[name='poup40']").val((dadosCalc.poup40/1000).toFixed(2));
+            $table.find("[name='poup40']").val((dadosCalc.poup40/1000).toFixed(2));            
+            if (dadosCalc.mesCompraImovel) {
+                var ano = Math.floor(dadosCalc.mesCompraImovel / 12)+1;
+                var mes = dadosCalc.mesCompraImovel % 12 + 1;
+                $table.find("[name='mesCompra']").val(dadosCalc.mesCompraImovel + " meses (ano " + ano + " mês " + mes + ")");
+                $table.find("[name='valorCompra']").val(fmt(dadosCalc.valorCompraImovel));
+            }
             this.dadosCalc = dadosCalc;
         },
         
@@ -157,19 +170,25 @@
             $tr.append("<th>Mês</th>");
             if (tabs.salario) $tr.append("<th>Salário</th>");
             if (tabs.aluguel) $tr.append("<th>Aluguel</th>");
+            if (tabs.parcela) $tr.append("<th>Parcela Financiamento</th>");
             if (tabs.sobra) $tr.append("<th>Sobra</th>");
             if (tabs.rend) $tr.append("<th>Rendimento</th>");
             if (tabs.poup) $tr.append("<th>Poupado</th>");
+            if (tabs.valorImovel) $tr.append("<th>Valor Imóvel</th>");            
             
             var $tbody = $("<tbody>").appendTo($tableDados);
             for (var i = 0; i < 480; i++) {
+                var ano = Math.floor(i / 12)+1;
+                var mes = i % 12 + 1;
                 $tr = $("<tr>").appendTo($tbody);
-                $("<td>"+(i+1)+"</td>").appendTo($tr);
+                $("<td>"+(i+1)+" (ano " + ano + " mês " + mes + ")</td>").appendTo($tr);
                 if (tabs.salario) $tr.append("<td>"+fmt(tabs.salario.dados[i])+"</td>");
                 if (tabs.aluguel) $tr.append("<td>"+fmt(tabs.aluguel.dados[i])+"</td>");
+                if (tabs.parcela) $tr.append("<td>"+fmt(tabs.parcela.dados[i])+"</td>");
                 if (tabs.sobra) $tr.append("<td>"+fmt(tabs.sobra.dados[i])+"</td>");
                 if (tabs.rend) $tr.append("<td>"+fmt(tabs.rend.dados[i])+"</td>");
                 if (tabs.poup) $tr.append("<td>"+fmt(tabs.poup.dados[i])+"</td>");
+                if (tabs.valorImovel) $tr.append("<th>"+fmt(tabs.valorImovel.dados[i])+"</th>");
                 if ((i+1) % 12 == 0) {
                     $tr.addClass("info");
                 }
@@ -225,5 +244,11 @@ function tof(val) {
 }
 
 function fmt(val) {
-    return val.toFixed(2);
+    return val.toLocaleString('pt-BR', {minimumFractionDigits: 2});//toFixed(2);
 }
+
+function percMes2Ano(aa) {
+  var q = Math.pow(1+aa,1.0/12);
+  ir = q - 1;
+  return ir;
+} 
